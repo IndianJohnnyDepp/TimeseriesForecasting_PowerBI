@@ -1,0 +1,16 @@
+import pandas as pd
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
+dataset["Week"] = pd.to_datetime(dataset["Week"])
+
+dataset = dataset.set_index("Week")
+TS = dataset.resample("W").first()
+
+train = TS.iloc[:526]
+test = TS.iloc[526:]
+
+model = ExponentialSmoothing( train, trend='add', seasonal='add' ).fit()
+
+forcst = pd.DataFrame(model.forecast(26))
+forcst = forcst.reset_index()
+forcst.columns = ["Week","Nrlzd FTE"]
